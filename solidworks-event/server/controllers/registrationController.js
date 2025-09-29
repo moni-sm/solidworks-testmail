@@ -1,15 +1,24 @@
+require("dotenv").config();
 const Registration = require("../models/Registration");
 const ExcelJS = require("exceljs");
 const path = require("path");
 const nodemailer = require("nodemailer");
 
-// Nodemailer transporter
+// Nodemailer Transporter (recommended settings)
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // your Gmail account
-    pass: process.env.EMAIL_PASS, // App Password recommended
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
+});
+
+transporter.verify((err) => {
+  if (err) {
+    console.error("❌ SMTP Connection Error:", err);
+  } else {
+    console.log("✅ SMTP Ready to Send Emails");
+  }
 });
 
 // Register User
@@ -28,13 +37,13 @@ exports.registerUser = async (req, res) => {
       email,
       organization,
       designation,
-      timestamp: new Date(), // add timestamp for Excel sorting
+      timestamp: new Date(),
     });
     await newRegistration.save();
 
     // Admin Email
     const adminMail = {
-      from: `"SOLIDWORKS Event" <${process.env.EMAIL_USER}>`, 
+      from: `"SOLIDWORKS Event" <${process.env.EMAIL_USER}>`,
       to: process.env.ADMIN_EMAIL,
       subject: "New SOLIDWORKS Event Registration",
       html: `
@@ -50,7 +59,7 @@ exports.registerUser = async (req, res) => {
 
     // Customer Email
     const customerMail = {
-      from: `"SOLIDWORKS Event" <${process.env.EMAIL_USER}>`, 
+      from: `"SOLIDWORKS Event" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Your SOLIDWORKS Event Registration Confirmation",
       html: `
@@ -67,24 +76,21 @@ exports.registerUser = async (req, res) => {
       `,
     };
 
-    // Send both emails
-    await Promise.all([
-      transporter.sendMail(adminMail),
-      transporter.sendMail(customerMail),
-    ]);
+    // Send admin and customer emails
+    await transporter.sendMail(adminMail);
+    await transporter.sendMail(customerMail);
 
-    res.status(200).json({ message: "✅ Registration successful" });
+    res.status(200).json({ message: "Registration successful. Confirmation emails sent." });
   } catch (err) {
     console.error("❌ Registration Error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error: " + err.message });
   }
 };
 
-// Download Excel
+// Download Excel (unchanged except error log improvements)
 exports.downloadExcel = async (req, res) => {
   try {
     const registrations = await Registration.find().sort({ timestamp: 1 });
-
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Registrations");
 
@@ -119,6 +125,6 @@ exports.downloadExcel = async (req, res) => {
     });
   } catch (err) {
     console.error("❌ Excel Export Error:", err);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ message: "Server error: " + err.message });
   }
 };

@@ -30,11 +30,8 @@ body {
   transform: scale(1.1);
 }
 
-/* Hero Section */
+/* Hero Section - Full Rewrite */
 .hero {
-  background: linear-gradient(135deg, #1a1a1a, #ff9900);
-  color: #ffffff;
-  padding: 60px 50px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -42,11 +39,15 @@ body {
   border-radius: 15px;
   max-width: 1400px;
   margin: 30px auto;
-  align-items: center;
+  align-items: stretch; /* Ensures hero-left and hero-right are same height */
   box-shadow: 0 8px 30px rgba(0,0,0,0.2);
   position: relative;
   overflow: hidden;
+  padding: 60px 50px;
+  background: linear-gradient(135deg, #1a1a1a, #ff9900);
+  color: #ffffff;
 }
+
 .hero::after {
   content: "";
   position: absolute;
@@ -58,6 +59,7 @@ body {
   right: -50px;
   animation: float 6s ease-in-out infinite;
 }
+
 @keyframes float {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   50% { transform: translateY(20px) rotate(45deg); }
@@ -69,6 +71,7 @@ body {
   flex-direction: column;
   justify-content: center;
   min-width: 300px;
+  height: 100%; /* ensures both sides stretch equally */
 }
 
 .hero-left h1 {
@@ -78,6 +81,87 @@ body {
   color: #ffcc33;
   text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
 }
+
+.event-info {
+  font-size: 1.2rem;
+  line-height: 1.5;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+.register-btn {
+  background: #ffcc33;
+  padding: 14px 32px;
+  color: #1a1a1a;
+  border-radius: 10px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+  width: fit-content;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+}
+.register-btn:hover {
+  background: #e6b800;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.hero-right {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.hero-right img {
+  width: 100%;
+  height: 50%;        /* match height with hero-left */
+  object-fit: cover;   /* fill the container without distortion */
+  border-radius: 15px;
+  box-shadow: 0 12px 35px rgba(0,0,0,0.4);
+  transition: transform 0.3s, box-shadow 0.3s;
+  margin-bottom: 20px;
+}
+.hero-right img:hover {
+  transform: scale(1.03);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.45);
+}
+
+.hero-right .hero-content-desc {
+  font-size: 1rem;
+  line-height: 1.6;
+  background: rgba(0,0,0,0.3);
+  padding: 20px;
+  border-radius: 15px;
+  width: 100%;
+  box-sizing: border-box;
+  color: #fff;
+  transition: all 0.3s;
+}
+.hero-right .hero-content-desc:hover {
+  background: rgba(0,0,0,0.4);
+  transform: translateY(-3px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+  .hero {
+    flex-direction: column;
+    padding: 40px 20px;
+  }
+  .hero-left, .hero-right {
+    text-align: center;
+    height: auto; /* remove fixed height for mobile */
+  }
+  .hero-right img {
+    height: auto;  /* responsive height */
+  }
+}
+
 .event-info {
   font-size: 1.2rem;
   line-height: 1.5;
