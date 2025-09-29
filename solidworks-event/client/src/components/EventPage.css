@@ -225,7 +225,7 @@ body {
 }
 .venue-card {
   flex: 1;
-  min-width: 280px;
+  min-width: 250px;
   background: #fff;
   padding: 25px;
   border-radius: 15px;
@@ -239,13 +239,17 @@ body {
 }
 .venue-card img {
   width: 100%;
-  border-radius: 12px;
-  margin-bottom: 15px;
-  transition: transform 0.3s;
+  max-height: 180px;     /* limit image height */
+  object-fit: cover;     /* crop nicely if aspect ratio differs */
+  border-radius: 10px;
+  margin-bottom: 12px;
+  transition: transform 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15); /* subtle depth */
 }
 .venue-card img:hover {
-  transform: scale(1.05);
+  transform: scale(1.03); /* slightly smaller hover zoom */
 }
+
 .map {
   flex: 2;
   min-width: 280px;
