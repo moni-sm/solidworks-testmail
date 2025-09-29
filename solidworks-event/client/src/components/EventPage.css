@@ -26,6 +26,17 @@ body {
   object-fit: contain;
   transition: transform 0.3s;
 }
+
+.head-left img {
+  height: 100px;
+  object-fit: contain;
+  transition: transform 0.3s;
+}
+.head-right img {
+  height: 70px;
+  object-fit: contain;
+  transition: transform 0.3s;
+}
 .header img:hover {
   transform: scale(1.1);
 }
@@ -118,7 +129,7 @@ body {
 }
 
 .hero-right img {
-  width: 100%;
+  width: 80%;
   height: 50%;        /* match height with hero-left */
   object-fit: cover;   /* fill the container without distortion */
   border-radius: 15px;
@@ -466,5 +477,153 @@ iframe {
   .venue-details {
     flex-direction: column;
     align-items: center;
+  }
+}
+
+/* --- Mobile Responsiveness --- */
+
+/* General adjustments for screens <900px */
+@media (max-width: 900px) {
+  /* Hero Section */
+  .hero {
+    flex-direction: column;
+    padding: 30px 15px;
+    gap: 25px;
+  }
+  .hero-left, .hero-right {
+    text-align: center;
+    min-width: 100%;
+    height: auto;
+  }
+  .hero-left h1 {
+    font-size: 2rem;
+  }
+  .event-info {
+    font-size: 1rem;
+  }
+  .register-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  .hero-right img {
+    width: 100%;
+    height: auto;
+    max-width: 450px;
+  }
+  .hero-right .hero-content-desc {
+    font-size: 0.95rem;
+    padding: 15px;
+  }
+
+  /* Sponsors */
+  .sponsors {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  .sponsors img {
+    height: 120px;
+  }
+
+  /* Countdown */
+  .countdown {
+    justify-content: center;
+    gap: 10px;
+  }
+  .countdown div {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+
+  /* Venue Section */
+  .venue {
+    padding: 30px 15px;
+  }
+  .venue h3 {
+    font-size: 1.6rem;
+  }
+  .venue-card {
+    flex: 1 1 100%;
+    max-width: 400px;
+    text-align: center;
+  }
+  .venue-card img {
+    max-height: 150px;
+  }
+  .direction-btn {
+    font-size: 0.85rem;
+    padding: 8px 18px;
+  }
+
+  /* Registration Form */
+  .final-form {
+    padding: 40px 15px;
+  }
+  .order {
+    padding: 25px;
+  }
+  .form-section input {
+    padding: 12px;
+  }
+  .submit-btn {
+    padding: 14px;
+    font-size: 1rem;
+  }
+}
+
+/* Further adjustments for very small screens <600px */
+@media (max-width: 600px) {
+  .hero-left h1 {
+    font-size: 1.6rem;
+  }
+  .event-info {
+    font-size: 0.9rem;
+  }
+  .register-btn {
+    padding: 10px 15px;
+    font-size: 0.95rem;
+  }
+  .hero-right .hero-content-desc {
+    font-size: 0.9rem;
+  }
+  .sponsors img {
+    height: 100px;
+  }
+  .countdown div {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+  .venue h3 {
+    font-size: 1.4rem;
+  }
+  .direction-btn {
+    font-size: 0.8rem;
+    padding: 6px 15px;
+  }
+  .final-form {
+    padding: 30px 10px;
+  }
+  .order {
+    padding: 20px;
+  }
+  .form-section input {
+    padding: 10px;
+  }
+  .submit-btn {
+    padding: 12px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Optional: improve sticky header for mobile */
+@media (max-width: 600px) {
+  .header {
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 15px;
+  }
+  .head-left img, .head-right img {
+    height: 60px;
   }
 }

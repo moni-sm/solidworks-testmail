@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom"; // Added
 import "./EventPage.css";
 import CkonnectLogo from "../assets/CkonnectLogo.png";
 import DSLogo from "../assets/DSLogo.png";
@@ -15,11 +16,11 @@ export default function EventPage() {
   });
 
   const [showForm, setShowForm] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const formRef = useRef(null);
   const API_URL = "http://localhost:5000"; // Backend URL
+  const navigate = useNavigate(); // Added
 
   // Countdown logic
   useEffect(() => {
@@ -93,24 +94,24 @@ export default function EventPage() {
       return;
     }
 
-    // Optimistic UI: show popup & hide form immediately
-    setShowPopup(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-    setShowForm(false);
-    e.target.reset();
-
     try {
-      await fetch(`${API_URL}/api/register`, {
+      const response = await fetch(`${API_URL}/api/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
+
+      if (response.ok) {
+        // On success navigate to Confirmation page
+        navigate("/confirmation");
+      } else {
+        alert("Registration failed. Please try again.");
+      }
     } catch (err) {
       console.error("Server error:", err);
       alert("Server error, please try again later.");
     } finally {
       setIsSubmitting(false);
-      setTimeout(() => setShowPopup(false), 3000);
     }
   };
 
@@ -118,8 +119,12 @@ export default function EventPage() {
     <div>
       {/* Header */}
       <header className="header">
-        <img src={CkonnectLogo} alt="Left Logo" />
-        <img src={DSLogo} alt="Right Logo" />
+        <div className="head-left">
+          <img src={CkonnectLogo} alt="Left Logo" />
+        </div>
+        <div className="head-right">
+          <img src={DSLogo} alt="Right Logo" />
+        </div>
       </header>
 
       {/* Hero Section */}
@@ -127,7 +132,8 @@ export default function EventPage() {
         <div className="hero-left">
           <h1>SOLIDWORKS 2026 Launch Event – Bengaluru</h1>
           <div className="event-info">
-            📅 October 30, 2025 • ⏰ 09:00 AM<br />
+            📅 October 30, 2025 • ⏰ 09:00 AM
+            <br />
             📍 Bengaluru, Karnataka - India
           </div>
           <button className="register-btn" onClick={showFinalForm}>
@@ -137,19 +143,23 @@ export default function EventPage() {
           <div className="countdown">
             <div>
               <span>{countdown.days}</span>
-              <br />Days
+              <br />
+              Days
             </div>
             <div>
               <span>{countdown.hours}</span>
-              <br />Hours
+              <br />
+              Hours
             </div>
             <div>
               <span>{countdown.minutes}</span>
-              <br />Minutes
+              <br />
+              Minutes
             </div>
             <div>
               <span>{countdown.seconds}</span>
-              <br />Seconds
+              <br />
+              Seconds
             </div>
           </div>
 
@@ -162,7 +172,11 @@ export default function EventPage() {
         <div className="hero-right">
           <img src={DSBanner} alt="Event Banner" />
           <div className="hero-content-desc">
-            SOLIDWORKS 2026 is coming to India! Be among the first to experience what’s new. Discover the evolution of intelligent design with the launch of SOLIDWORKS 2026, built to accelerate design innovation through tools for manufacturing, AI-powered design, real-time simulation, improved performance, and tighter integration with the 3DEXPERIENCE cloud platform.
+            SOLIDWORKS 2026 is coming to India! Be among the first to experience what’s new.
+            Discover the evolution of intelligent design with the launch of SOLIDWORKS 2026, built to
+            accelerate design innovation through tools for manufacturing, AI-powered design,
+            real-time simulation, improved performance, and tighter integration with the 3DEXPERIENCE
+            cloud platform.
           </div>
         </div>
       </section>
@@ -176,10 +190,14 @@ export default function EventPage() {
             <img src={VenueImage} alt="Venue" />
             <h3>Address</h3>
             <p>
-              Taj Yeshwantpur, Bengaluru<br />
-              2275, Tumkur Rd, Yeshwanthpur Industrial Area,<br />
-              Phase 1, Yeswanthpur,<br />
-              Bengaluru, Karnataka 560022<br />
+              Taj Yeshwantpur, Bengaluru
+              <br />
+              2275, Tumkur Rd, Yeshwanthpur Industrial Area,
+              <br />
+              Phase 1, Yeswanthpur,
+              <br />
+              Bengaluru, Karnataka 560022
+              <br />
               India
             </p>
             <a
@@ -206,7 +224,14 @@ export default function EventPage() {
               </div>
               <div className="form-section">
                 <label htmlFor="phone">Phone Number</label>
-                <input type="tel" id="phone" name="phone" required pattern="[0-9]{10}" title="Enter 10-digit phone number" />
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  required
+                  pattern="[0-9]{10}"
+                  title="Enter 10-digit phone number"
+                />
               </div>
               <div className="form-section">
                 <label htmlFor="email">Email ID</label>
@@ -226,15 +251,6 @@ export default function EventPage() {
             </form>
           </div>
         </section>
-      )}
-
-      {/* Success Popup */}
-      {showPopup && (
-        <div className="popup">
-          <div className="popup-content">
-            ✅ Registration submitted successfully!
-          </div>
-        </div>
       )}
     </div>
   );

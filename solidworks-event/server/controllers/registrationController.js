@@ -2,26 +2,8 @@ require("dotenv").config();
 const Registration = require("../models/Registration");
 const ExcelJS = require("exceljs");
 const path = require("path");
-const nodemailer = require("nodemailer");
 
-// Nodemailer Transporter (recommended settings)
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
-
-transporter.verify((err) => {
-  if (err) {
-    console.error("❌ SMTP Connection Error:", err);
-  } else {
-    console.log("✅ SMTP Ready to Send Emails");
-  }
-});
-
-// Register User
+// Register User endpoint WITHOUT sending emails
 exports.registerUser = async (req, res) => {
   try {
     const { name, phone, email, organization, designation } = req.body;
@@ -30,7 +12,6 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Save to MongoDB
     const newRegistration = new Registration({
       name,
       phone,
@@ -41,56 +22,18 @@ exports.registerUser = async (req, res) => {
     });
     await newRegistration.save();
 
-    // Admin Email
-    const adminMail = {
-      from: `"SOLIDWORKS Event" <${process.env.EMAIL_USER}>`,
-      to: process.env.ADMIN_EMAIL,
-      subject: "New SOLIDWORKS Event Registration",
-      html: `
-        <h3>New Registration Received</h3>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Phone:</b> ${phone}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Organization:</b> ${organization}</p>
-        <p><b>Designation:</b> ${designation}</p>
-        <p><b>Registered On:</b> ${new Date().toLocaleString()}</p>
-      `,
-    };
-
-    // Customer Email
-    const customerMail = {
-      from: `"SOLIDWORKS Event" <${process.env.EMAIL_USER}>`,
-      to: email,
-      subject: "Your SOLIDWORKS Event Registration Confirmation",
-      html: `
-        <h3>Thank you for registering!</h3>
-        <p>We have received your details:</p>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Phone:</b> ${phone}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Organization:</b> ${organization}</p>
-        <p><b>Designation:</b> ${designation}</p>
-        <p><b>Registered On:</b> ${new Date().toLocaleString()}</p>
-        <br/>
-        <p>We will contact you soon with more event details.</p>
-      `,
-    };
-
-    // Send admin and customer emails
-    await transporter.sendMail(adminMail);
-    await transporter.sendMail(customerMail);
-
-    res.status(200).json({ message: "Registration successful. Confirmation emails sent." });
+    res.status(200).json({ message: "✅ Registration successful" });
   } catch (err) {
     console.error("❌ Registration Error:", err);
-    res.status(500).json({ message: "Server error: " + err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
 
-// Download Excel (unchanged except error log improvements)
+// Download Excel endpoint unchanged
 exports.downloadExcel = async (req, res) => {
   try {
     const registrations = await Registration.find().sort({ timestamp: 1 });
+
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Registrations");
 
@@ -125,6 +68,6 @@ exports.downloadExcel = async (req, res) => {
     });
   } catch (err) {
     console.error("❌ Excel Export Error:", err);
-    res.status(500).json({ message: "Server error: " + err.message });
+    res.status(500).json({ message: "Server error" });
   }
 };
