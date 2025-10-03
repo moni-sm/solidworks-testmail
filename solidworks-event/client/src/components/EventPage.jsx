@@ -132,10 +132,20 @@ export default function EventPage() {
         <div className="hero-left">
           <h1>SOLIDWORKS 2026 Launch Event – Bengaluru</h1>
           <div className="event-info">
-            📅 October 30, 2025 • ⏰ 09:00 AM
+            📅 October 30, 2025 • ⏰ 09:00 AM - 05:00 PM
             <br />
             📍 Bengaluru, Karnataka - India
           </div>
+          <h3>Address</h3>
+            <p><b>Taj Yeshwantpur, Bengaluru</b><br />
+              2275, Tumkur Rd, Yeshwanthpur Industrial Area,
+              <br />
+              Phase 1, Yeswanthpur,
+              <br />
+              Bengaluru, Karnataka 560022
+              <br />
+              India
+            </p>
           <button className="register-btn" onClick={showFinalForm}>
             REGISTER NOW
           </button>
@@ -164,7 +174,7 @@ export default function EventPage() {
           </div>
 
           <div className="sponsors">
-            <p>Sponsored by</p>
+            <p>Our Event Partner</p>
             <img src={SolidCAMLogo} alt="SolidCAM Logo" />
           </div>
         </div>
@@ -177,37 +187,6 @@ export default function EventPage() {
             accelerate design innovation through tools for manufacturing, AI-powered design,
             real-time simulation, improved performance, and tighter integration with the 3DEXPERIENCE
             cloud platform.
-          </div>
-        </div>
-      </section>
-
-      {/* Venue Section */}
-      <section className="venue">
-        <h3>Venue</h3>
-        <p>Join us at the following location:</p>
-        <div className="venue-details">
-          <div className="venue-card">
-            <img src={VenueImage} alt="Venue" />
-            <h3>Address</h3>
-            <p>
-              Taj Yeshwantpur, Bengaluru
-              <br />
-              2275, Tumkur Rd, Yeshwanthpur Industrial Area,
-              <br />
-              Phase 1, Yeswanthpur,
-              <br />
-              Bengaluru, Karnataka 560022
-              <br />
-              India
-            </p>
-            <a
-              href="https://maps.app.goo.gl/8o6VRvkg4V9WC9BL6"
-              className="direction-btn"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              GET DIRECTIONS
-            </a>
           </div>
         </div>
       </section>
@@ -255,3 +234,7 @@ export default function EventPage() {
     </div>
   );
 }
+
+
+
+

@@ -1,5 +1,5 @@
 .admin-container {
-  background: #eee3c5;
+  background: #49463d;
   color: #fff;
   min-height: 100vh;
   padding: 30px;
@@ -57,7 +57,7 @@
 }
 
 .admin-table tr:nth-child(even) {
-  background: #717070;
+  background: #3b3b3b;
 }
 
 .admin-table tr:hover {
