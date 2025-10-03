@@ -5,7 +5,7 @@ import "./AdminPage.css";
 export default function AdminPage() {
   const [registrations, setRegistrations] = useState([]);
   const [selectedIds, setSelectedIds] = useState([]);
-  const API_URL = "https://solidworks-testmail.onrender.com";
+  const API_URL = "http://localhost:5000";
 
   const fetchRegistrations = async () => {
     try {
@@ -88,4 +88,5 @@ export default function AdminPage() {
     </div>
   );
 }
+
 
