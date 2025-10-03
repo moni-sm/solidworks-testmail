@@ -6,16 +6,17 @@ const nodemailer = require("nodemailer");
 
 // 📩 Setup Nodemailer transporter (Gmail + App Password)
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,               // TLS port works on Render
-  secure: false,           // false for TLS
+  service: "gmail", // use Gmail service
   auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASS, // Gmail App Password required for 2FA accounts
+    user: process.env.GMAIL_USER, // your Gmail
+    pass: process.env.GMAIL_PASS, // App Password for 2FA accounts
   },
-  tls: { rejectUnauthorized: false },
-  connectionTimeout: 10000, // 10 seconds
-  greetingTimeout: 10000,
+});
+
+// Optional: Verify SMTP connection on startup
+transporter.verify((err, success) => {
+  if (err) console.error("❌ SMTP Connection Error:", err);
+  else console.log("✅ SMTP Server ready to send emails");
 });
 
 // 📌 Register User endpoint
@@ -27,7 +28,7 @@ exports.registerUser = async (req, res) => {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Save to DB
+    // Save registration to DB
     const newRegistration = new Registration({
       name,
       phone,
@@ -38,58 +39,32 @@ exports.registerUser = async (req, res) => {
     });
     await newRegistration.save();
 
-    // ✅ Email to Client (confirmation)
+    // ✅ Email to Client
     const userMail = {
       from: process.env.GMAIL_USER,
       to: email,
       subject: "✅ Registration Successful",
-      html: `
-        <h2>Hello ${name},</h2>
-        <p>Thank you for registering with us. Here are your details:</p>
-        <ul>
-          <li><b>Organization:</b> ${organization}</li>
-          <li><b>Designation:</b> ${designation}</li>
-          <li><b>Phone:</b> ${phone}</li>
-          <li><b>Email:</b> ${email}</li>
-        </ul>
-        <p>We’ll get in touch with you soon.</p>
-        <br/>
-        <p>Best Regards,<br/>The Team</p>
-      `,
+      text: `Hello ${name},\n\nThank you for registering.\nOrganization: ${organization}\nDesignation: ${designation}\nPhone: ${phone}\nEmail: ${email}\n\nWe’ll get in touch with you soon.\n\nBest Regards,\nThe Team`,
     };
 
-    // ✅ Email to Admin (notification)
+    // ✅ Email to Admin
     const adminMail = {
       from: process.env.GMAIL_USER,
       to: process.env.ADMIN_EMAIL,
       subject: "📩 New Registration Received",
-      html: `
-        <h2>New Registration Details</h2>
-        <ul>
-          <li><b>Name:</b> ${name}</li>
-          <li><b>Email:</b> ${email}</li>
-          <li><b>Phone:</b> ${phone}</li>
-          <li><b>Organization:</b> ${organization}</li>
-          <li><b>Designation:</b> ${designation}</li>
-          <li><b>Time:</b> ${new Date().toLocaleString()}</li>
-        </ul>
-      `,
+      text: `New Registration Details:\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nOrganization: ${organization}\nDesignation: ${designation}\nTime: ${new Date().toLocaleString()}`,
     };
 
-    // Send emails individually to avoid breaking endpoint
-    try {
-      await transporter.sendMail(userMail);
-      console.log("✅ User confirmation email sent");
-    } catch (err) {
-      console.error("❌ User email error:", err);
-    }
+    // Send emails individually
+    transporter.sendMail(userMail, (err, info) => {
+      if (err) console.error("❌ User email error:", err);
+      else console.log("✅ User email sent:", info.response);
+    });
 
-    try {
-      await transporter.sendMail(adminMail);
-      console.log("✅ Admin notification email sent");
-    } catch (err) {
-      console.error("❌ Admin email error:", err);
-    }
+    transporter.sendMail(adminMail, (err, info) => {
+      if (err) console.error("❌ Admin email error:", err);
+      else console.log("✅ Admin email sent:", info.response);
+    });
 
     res.status(200).json({ message: "✅ Registration successful. Emails sent (if possible)." });
   } catch (err) {
