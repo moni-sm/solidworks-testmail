@@ -7,19 +7,18 @@ const nodemailer = require("nodemailer");
 // 📩 Setup Nodemailer transporter (Gmail + App Password)
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  port: 587,       // TLS port (works on Render)
-  secure: false,   // false for TLS
+  port: 587,               // TLS port works on Render
+  secure: false,           // false for TLS
   auth: {
     user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_PASS, // App Password (required for Gmail + MFA)
+    pass: process.env.GMAIL_PASS, // Gmail App Password required for 2FA accounts
   },
-  tls: {
-    rejectUnauthorized: false,  // avoid self-signed cert issues
-  },
+  tls: { rejectUnauthorized: false },
+  connectionTimeout: 10000, // 10 seconds
+  greetingTimeout: 10000,
 });
 
-
-// 📌 Register User endpoint WITH sending emails
+// 📌 Register User endpoint
 exports.registerUser = async (req, res) => {
   try {
     const { name, phone, email, organization, designation } = req.body;
@@ -62,7 +61,7 @@ exports.registerUser = async (req, res) => {
     // ✅ Email to Admin (notification)
     const adminMail = {
       from: process.env.GMAIL_USER,
-      to: process.env.ADMIN_EMAIL, // admin email from .env
+      to: process.env.ADMIN_EMAIL,
       subject: "📩 New Registration Received",
       html: `
         <h2>New Registration Details</h2>
@@ -77,18 +76,29 @@ exports.registerUser = async (req, res) => {
       `,
     };
 
-    // Send both mails
-    await transporter.sendMail(userMail);
-    await transporter.sendMail(adminMail);
+    // Send emails individually to avoid breaking endpoint
+    try {
+      await transporter.sendMail(userMail);
+      console.log("✅ User confirmation email sent");
+    } catch (err) {
+      console.error("❌ User email error:", err);
+    }
 
-    res.status(200).json({ message: "✅ Registration successful. Emails sent." });
+    try {
+      await transporter.sendMail(adminMail);
+      console.log("✅ Admin notification email sent");
+    } catch (err) {
+      console.error("❌ Admin email error:", err);
+    }
+
+    res.status(200).json({ message: "✅ Registration successful. Emails sent (if possible)." });
   } catch (err) {
     console.error("❌ Registration Error:", err);
     res.status(500).json({ message: "Server error", error: err });
   }
 };
 
-// 📌 Download Excel endpoint (unchanged)
+// 📌 Download Excel endpoint
 exports.downloadExcel = async (req, res) => {
   try {
     const registrations = await Registration.find().sort({ timestamp: 1 });
