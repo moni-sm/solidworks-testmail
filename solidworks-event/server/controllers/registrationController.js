@@ -8,8 +8,8 @@ const nodemailer = require("nodemailer");
 const transporter = nodemailer.createTransport({
   service: "gmail", // use Gmail service
   auth: {
-    user: process.env.GMAIL_USER, // your Gmail
-    pass: process.env.GMAIL_PASS, // App Password for 2FA accounts
+    user: process.env.GMAIL_USER, // Your Gmail
+    pass: process.env.GMAIL_PASS, // Gmail App Password (required for 2FA)
   },
 });
 
@@ -44,7 +44,19 @@ exports.registerUser = async (req, res) => {
       from: process.env.GMAIL_USER,
       to: email,
       subject: "✅ Registration Successful",
-      text: `Hello ${name},\n\nThank you for registering.\nOrganization: ${organization}\nDesignation: ${designation}\nPhone: ${phone}\nEmail: ${email}\n\nWe’ll get in touch with you soon.\n\nBest Regards,\nThe Team`,
+      text: `Hello ${name},
+
+Thank you for registering.
+
+Organization: ${organization}
+Designation: ${designation}
+Phone: ${phone}
+Email: ${email}
+
+We’ll get in touch with you soon.
+
+Best Regards,
+The Team`,
     };
 
     // ✅ Email to Admin
@@ -52,10 +64,17 @@ exports.registerUser = async (req, res) => {
       from: process.env.GMAIL_USER,
       to: process.env.ADMIN_EMAIL,
       subject: "📩 New Registration Received",
-      text: `New Registration Details:\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nOrganization: ${organization}\nDesignation: ${designation}\nTime: ${new Date().toLocaleString()}`,
+      text: `New Registration Details:
+
+Name: ${name}
+Email: ${email}
+Phone: ${phone}
+Organization: ${organization}
+Designation: ${designation}
+Time: ${new Date().toLocaleString()}`,
     };
 
-    // Send emails individually
+    // Send emails (fire-and-forget style)
     transporter.sendMail(userMail, (err, info) => {
       if (err) console.error("❌ User email error:", err);
       else console.log("✅ User email sent:", info.response);
