@@ -6,12 +6,18 @@ const nodemailer = require("nodemailer");
 
 // 📩 Setup Nodemailer transporter (Gmail + App Password)
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: "smtp.gmail.com",
+  port: 587,       // TLS port (works on Render)
+  secure: false,   // false for TLS
   auth: {
-    user: process.env.GMAIL_USER, // your gmail
-    pass: process.env.GMAIL_PASS, // app password
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS, // App Password (required for Gmail + MFA)
+  },
+  tls: {
+    rejectUnauthorized: false,  // avoid self-signed cert issues
   },
 });
+
 
 // 📌 Register User endpoint WITH sending emails
 exports.registerUser = async (req, res) => {
